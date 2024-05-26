@@ -1,6 +1,6 @@
 from tkinter import *
 
-morse_translation = {
+morse_text_translation = {
   "a": ".-",
   "b": "-...",
   "c": "-.-.",
@@ -43,6 +43,7 @@ morse_code_result = Label(text="", font=("Arial", 30), wraplength=750)
 morse_code_result.pack(pady=100)
 
 morse_list = []
+audio_button_created = False
 
 def entry_validation(event=None):
 
@@ -53,12 +54,20 @@ def entry_validation(event=None):
         instruction_label.config(text="Please enter only letters and spaces.")
 
 def translate(user_input_list):
+    global audio_button_created
     for word in user_input_list:
         for x in range(len(word)):
-            morse_list.append(morse_translation[word[x]])
+            morse_list.append(morse_text_translation[word[x]])
         if not word == user_input_list[-1]:
             morse_list.append('/')
     morse_code_result.config(text=f'{"  ".join(morse_list)}')
+    if not audio_button_created:
+        audio_button = Button(text="Play message", font=("Arial", 15), command=play_audio)
+        audio_button.pack()
+        audio_button_created = True
+
+def play_audio():
+    pass
 
 entry.bind("<Return>", entry_validation)
 

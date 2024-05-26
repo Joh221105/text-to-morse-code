@@ -12,5 +12,5 @@ def play_audio(audio_file):
 pygame.mixer.init()
 
 # Example usage
-audio_file = "text-to-morse-code/test.mp3"  # Replace with the path to your audio file
+audio_file = "text-to-morse-code/audio/a.mp3"  # Replace with the path to your audio file
 play_audio(audio_file)
