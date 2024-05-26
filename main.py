@@ -46,6 +46,7 @@ morse_code_result.pack(pady=100)
 
 morse_list = []
 audio_button_created = False
+audio_files =[]
 
 def entry_validation(event=None):
 
@@ -57,34 +58,44 @@ def entry_validation(event=None):
 
 def translate(user_input_list, user_input):
     global audio_button_created
+    morse_list = []
     for word in user_input_list:
         for x in range(len(word)):
             morse_list.append(morse_text_translation[word[x]])
         if not word == user_input_list[-1]:
             morse_list.append('/')
     morse_code_result.config(text=f'{"  ".join(morse_list)}')
+
+    audio_files.append([f"text-to-morse-code/audio/{letter}.mp3" if letter != " " else "text-to-morse-code/audio/space.mp3" for letter in user_input])
+    
     if not audio_button_created:
         audio_button = Button(text="Play message", font=("Arial", 15), command=lambda:play_user_message(user_input))
         audio_button.pack()
         audio_button_created = True
 
 def play_user_message(user_input):
-    for letter in user_input:
-        if letter == " ":
-            letter = "space"
-        audio_file = f"text-to-morse-code/audio/{letter}.mp3"  # Replace with the path to your audio file
-        play_audio(audio_file)
-        small_space = "text-to-morse-code/audio/letter_space.mp3" # adds a little period of silence to differentiate between start and end of letters
-        play_audio(small_space)
+    global audio_files
 
+    if len(audio_files) == 2:
+        audio_files.pop(0)
+        for audio_file_list in audio_files:
+            for audio_file in audio_file_list:
+                play_audio(audio_file)
+                time.sleep(0.1)  # Add a small delay between letters
+    else:
+        for audio_file_list in audio_files:
+            for audio_file in audio_file_list:
+                play_audio(audio_file)
+                time.sleep(0.1)  
+
+# loads and plays the audio file
 def play_audio(audio_file):
-    pygame.mixer.music.load(audio_file)  # Load the audio file
-    pygame.mixer.music.play()  # Play the audio
-    while pygame.mixer.music.get_busy():
-        # Keep the program running while the audio is playing
+    pygame.mixer.music.load(audio_file)  
+    pygame.mixer.music.play()  
+    while pygame.mixer.music.get_busy(): # Keep the program running while the audio is playing
         time.sleep(0.1)
 
-# Initialize Pygame (should be done once at the beginning of your script)
+# Initialize Pygame 
 pygame.mixer.init()
 
 entry.bind("<Return>", entry_validation)
