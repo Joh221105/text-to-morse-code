@@ -1,3 +1,5 @@
+from tkinter import *
+
 morse_translation = {
   "a": ".-",
   "b": "-...",
@@ -27,27 +29,38 @@ morse_translation = {
   "z": "--..",
 }
 
+root = Tk()
+root.title('Morse Code Generator')
+root.minsize(width=1000, height=1000)
+
+instruction_label = Label(text='Enter your message!', font=("Arial", 20))
+instruction_label.pack(pady= 100)
+
+entry = Entry(width=50, font=("Arial", 15))
+entry.pack()
+
+morse_code_result = Label(text="", font=("Arial", 30), wraplength=750)
+morse_code_result.pack(pady=100)
 
 morse_list = []
 
-def get_user_input():
-    while True:
-        try:
-            user_input = input("Enter the message you want to encrypt: ")
-            # Check if input consists only of letters and/or spaces
-            if all(char.isalpha() or char.isspace() for char in user_input):
-                return user_input.split()  # Split the input by spaces and return as a list
-            else:
-                print("Please enter only letters and spaces.")
-        except ValueError:
-            print("An error occurred. Please try again.")
+def entry_validation(event=None):
 
-word_list = get_user_input()
+    user_input = entry.get().strip().lower()
+    if all(char.isalpha() or char.isspace() for char in user_input):
+        translate(user_input.split())  # Split the input by spaces and passes the list to translate function
+    else:
+        instruction_label.config(text="Please enter only letters and spaces.")
 
-for word in word_list:
-    for x in range(len(word)):
-        morse_list.append(morse_translation[word[x]])
-    if not word == word_list[-1]:
-        morse_list.append('/')
+def translate(user_input_list):
+    for word in user_input_list:
+        for x in range(len(word)):
+            morse_list.append(morse_translation[word[x]])
+        if not word == user_input_list[-1]:
+            morse_list.append('/')
+    morse_code_result.config(text=f'{"  ".join(morse_list)}')
 
-print(' '.join(morse_list))
+entry.bind("<Return>", entry_validation)
+
+
+root.mainloop()
