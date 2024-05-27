@@ -29,6 +29,7 @@ morse_text_translation = {
   "x": "-..-",
   "y": "-.--",
   "z": "--..",
+  " ": "/"
 }
 
 # Initialize tkinter 
@@ -46,7 +47,7 @@ entry = Entry(width=50, font=("Arial", 15))
 entry.pack()
 
 # Define the placeholder text
-placeholder_text = "Enter your message!"
+placeholder_text = "Enter your message to translate to or from morse code"
 
 # Insert the placeholder text into the Entry widget
 entry.insert(0, placeholder_text)
@@ -69,13 +70,16 @@ audio_files =[]
 def entry_validation(event=None):
 
     user_input = entry.get().strip().lower()
+    acceptable_morse_code = {'.', '-', ' ', '/'}
     if all(char.isalpha() or char.isspace() for char in user_input):
-        translate(user_input.split(), user_input)  # Split the input by spaces and passes the list to translate function
+        translate_to_morse(user_input.split(), user_input)  # Split the input by spaces and passes the list to translate function
+    elif all(char in acceptable_morse_code for char in user_input):
+        translate_to_text(user_input.split(), user_input)
     else:
-        instruction_label.config(text="Please enter only letters and spaces.")
+        instruction_label.config(text="Please enter only letters or morse code.")
 
 # using the dictionary, user input is translated into morse code and displayed using a label, also creates a play message button
-def translate(user_input_list, user_input):
+def translate_to_morse(user_input_list, user_input):
     global audio_button_created
     morse_list = []
     for word in user_input_list:
@@ -91,6 +95,15 @@ def translate(user_input_list, user_input):
         audio_button = Button(text="Play message", font=("Arial", 15), command=lambda:play_user_message(user_input))
         audio_button.pack()
         audio_button_created = True
+
+def translate_to_text(user_input_list):
+    message = ""
+
+    for code in user_input_list:
+        for key,value in morse_text_translation.items():
+            if code == value:
+                message += key
+    morse_code_result.config(text=f'{message}')
 
 # translates generated morse code into audio output
 def play_user_message(user_input):
